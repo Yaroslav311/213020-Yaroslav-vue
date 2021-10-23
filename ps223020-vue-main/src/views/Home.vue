@@ -29,7 +29,11 @@
               <td>{{ note.body }}</td>
               <td>{{ note.createTime }}</td>
               <td>
-                <button type="button" class="btn btn-warning btn-sm">
+                <button
+                    type="button"
+                    class="btn btn-warning btn-sm"
+                    v-b-modal.note-update-modal
+                    @click="editNotek(note)">
                   Изменить
                 </button>
                 <button type="button" class="btn btn-danger btn-sm">
@@ -79,19 +83,6 @@
           </b-form-input>
         </b-form-group>
 
-        <b-form-group
-          id="form-createTime-group"
-          label="Дата создания:"
-          label-for="form-createTime-input"
-        >
-        <b-form-input 
-          id="form-createTime-input" 
-          type="date" 
-          v-model="addNoteForm.createTime" 
-          required
-        >
-          </b-form-input>
-        </b-form-group>
 
         <b-button type="submit" variant="primary">Сохранить</b-button>
         <b-button type="reset" variant="danger">Сбросить</b-button>
@@ -181,6 +172,9 @@ export default {
   components: {
     alert: Alert,
   },
+   editNote(note) {
+  this.editForm = note;
+},
   methods: {
     getNotes() {
       const path = "http://localhost:52362/api/Notes";
@@ -211,6 +205,20 @@ export default {
           console.log(error);
         });
     },
+    updateNote(payload, noteID) {
+  const path = `http://localhost:5000/books/${noteID}`;
+  axios.put(path, payload)
+    .then(() => {
+      this.getNote();
+      this.message = 'Заметка обнавлена';
+      this.showMessage = true;
+    })
+    .catch((error) => {
+      // eslint-отключение следующей строки
+      console.error(error);
+      this.getBooks();
+    });
+},
     initForm() {
       this.addNoteForm.title = "";
       this.addNoteForm.body = "";
@@ -223,13 +231,60 @@ export default {
       const payload = {
         title: this.addNoteForm.title,
         body: this.addNoteForm.body,
-        // createTime: this.addNoteForm.createTime
       };
 
       this.addNote(payload);
       this.initForm();
     },
-    onReset(evt) {
+
+    initForm() {
+  this.addNoteForm.title = '';
+  this.addNoteForm.author = '';
+  this.addNoteForm.read = [];
+  this.editForm.id = '';
+  this.editForm.title = '';
+  this.editForm.author = '';
+  this.editForm.read = [];
+},
+
+onResetUpdate(evt) {
+  evt.preventDefault();
+  this.$refs.editNoteModal.hide();
+  this.initForm();
+  this.getNotes();
+},
+
+    onSubmitUpdate(evt) {
+  evt.preventDefault();
+  this.$refs.editNoteModal.hide();
+
+  const payload = {
+    title: this.editForm.title,
+    author: this.editForm.author,
+    read,
+  };
+  this.updateBook(payload, this.editForm.id);
+},
+
+
+
+updateNote(payload, noteID) {
+        const path = `http://localhost:52362/api/Notes/${noteID}`;
+      const headers = {
+        "Content-Type": "application/json",
+      };
+  
+  axios.put(path, payload)
+    .then(() => {
+      this.getBooks();
+    })
+    .catch((error) => {
+      // eslint-отключение следующей строки
+      console.error(error);
+      this.getBooks();
+    });
+},
+    onReset(evt) {s
       evt.preventDefault();
       this.$refs.addNoteModal.hide();
       this.initForm();
