@@ -177,7 +177,7 @@ export default {
 },
   methods: {
     getNotes() {
-      const path = "http://localhost:52362/api/Notes";
+      const path = "http://localhost:60173/api/Notes";
       axios
         .get(path)
         .then((res) => {
@@ -189,7 +189,7 @@ export default {
         });
     },
     addNote(payload) {
-      const path = "http://localhost:52362/api/Notes";
+      const path = "http://localhost:60173/api/Notes";
       const headers = {
         "Content-Type": "application/json",
       };
@@ -206,7 +206,7 @@ export default {
         });
     },
     updateNote(payload, noteID) {
-  const path = `http://localhost:5000/books/${noteID}`;
+  const path = `http://localhost:60173/api/Notes/${noteID}`;
   axios.put(path, payload)
     .then(() => {
       this.getNote();
@@ -269,7 +269,7 @@ onResetUpdate(evt) {
 
 
 updateNote(payload, noteID) {
-        const path = `http://localhost:52362/api/Notes/${noteID}`;
+        const path = `http://localhost:60173/api/Notes${noteID}`;
       const headers = {
         "Content-Type": "application/json",
       };
